@@ -1,9 +1,8 @@
 #include <iostream>
+#include <utility>
 #include <GLFW/glfw3.h>
 #include <webgpu/webgpu_cpp.h>
 #include <webgpu/webgpu_glfw.h>
-
-
 
 wgpu::Instance instance;
 wgpu::Adapter adapter;
@@ -13,9 +12,8 @@ wgpu::TextureFormat format;
 wgpu::RenderPipeline pipeline;
 
 
-
-const uint32_t kWidth = 512;
-const uint32_t kHeight = 512;
+constexpr uint32_t kWidth = 512;
+constexpr uint32_t kHeight = 512;
 
 void GetAdapter(void (*callback)(wgpu::Adapter)) {
   instance.RequestAdapter(
@@ -58,7 +56,7 @@ void ConfigureSurface() {
   surface.Configure(&config);
 }
 
-const char shaderCode[] = R"(
+constexpr char shaderCode[] = R"(
     @vertex fn vertexMain(@builtin(vertex_index) i : u32) ->
       @builtin(position) vec4f {
         const pos = array(vec2f(0, 1), vec2f(-1, -1), vec2f(1, -1));
@@ -139,9 +137,9 @@ void Start() {
 int main() {
   instance = wgpu::CreateInstance();
   GetAdapter([](wgpu::Adapter a) {
-    adapter = a;
+    adapter = std::move(a);
     GetDevice([](wgpu::Device d) {
-      device = d;
+      device = std::move(d);
       Start();
     });
   });
